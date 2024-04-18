@@ -5,13 +5,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public interface SlotInterface
-{
-    public void SetText(string txt);
-    public void SetImage(string spriteName);
-}
 
-public class UISlot : MonoBehaviour, SlotInterface
+public class UISlot : MonoBehaviour
 {
     #region UIFields
 
