@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerData : MonoBehaviour
+public class PlayerData
 {
     #region UIFields
 
@@ -24,6 +24,7 @@ public class PlayerData : MonoBehaviour
     public eGrade _Grade
     {
         get { return _grade; }
+        set { _grade = value; }
     }
 
     public enum eType
@@ -38,18 +39,21 @@ public class PlayerData : MonoBehaviour
     public eType _Type
     {
         get { return _type; }
+        set { _type = value; }
     }
 
     private string _fullName;
     public string _FullName
     {
         get { return _fullName; }
+        set { _fullName = value; }
     }
 
     private int _season;
     public int _Season
     {
         get { return _season; }
+        set { _season = value; }
     }
 
     #endregion

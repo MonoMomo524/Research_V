@@ -15,6 +15,9 @@ public class UIScrollView : MonoBehaviour
 
     #region Fields
 
+    public delegate void InitializeScroll(List<ScrollItemInfo> infoList);
+    public InitializeScroll _initalizeScroll;
+
     private int _itemCount;
 
     public class ScrollItemInfo
@@ -35,21 +38,24 @@ public class UIScrollView : MonoBehaviour
 
     #region Constructors
 
-
+    private void Awake()
+    {
+        _initalizeScroll = new InitializeScroll(InitScroll);
+        _initalizeScroll += SetScroll;
+    }
 
     #endregion
 
     #region Methods
 
-    public void InitScroll(List<ScrollItemInfo> infoList)
+    private void InitScroll(List<ScrollItemInfo> infoList)
     {
         if (infoList == null) return;
 
         _itemCount = infoList.Count;
-        SetScroll(infoList);
     }
 
-    public void SetScroll(List<ScrollItemInfo> infoList)
+    private void SetScroll(List<ScrollItemInfo> infoList)
     {
         if(!_itemPrefab)
         {
@@ -78,7 +84,7 @@ public class UIScrollView : MonoBehaviour
             if(infoList[i]._itemType == ScrollItemInfo.eItemType.ITEM ||
                 infoList[i]._itemType == ScrollItemInfo.eItemType.PLAYER)
             {
-                var uiSlot = objItem.AddComponent<UISlot>();
+                var uiSlot = objItem.GetComponent<UISlot>();
                 uiSlot.SetText(infoList[i]);
                 uiSlot.SetImage(infoList[i]);
             }

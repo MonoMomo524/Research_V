@@ -12,6 +12,7 @@ public class UISlot : MonoBehaviour
 
     [SerializeField] TextMeshProUGUI _text;
     [SerializeField] Image _img;
+    [SerializeField] Button _button;
 
     #endregion
 
@@ -23,7 +24,16 @@ public class UISlot : MonoBehaviour
 
     #region Constructors
 
-    
+    private void Start()
+    {
+        if(_button)
+        {
+            _button.onClick.AddListener(() =>
+            {
+                Debug.Log($"Clicked {_text.text}");
+            });
+        }
+    }
 
     #endregion
 
@@ -49,7 +59,7 @@ public class UISlot : MonoBehaviour
             // Grade
             for(int star = 0; star<(int)playerData._Grade; star++)
             {
-                sb.Append("¡Ú");
+                sb.Append("#");
             }
             sb.Append("\n");
 
