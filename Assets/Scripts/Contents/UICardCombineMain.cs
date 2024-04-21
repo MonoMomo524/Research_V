@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using ScrollItemInfo = UIScrollView.ScrollItemInfo;
 
 public class UICardCombineMain : MonoBehaviour
@@ -8,16 +9,16 @@ public class UICardCombineMain : MonoBehaviour
     #region UIFields
 
     [SerializeField] GameObject[] _selectedSlots;
-
     [SerializeField] GameObject _objSelectedEmpty;
-
     [SerializeField] GameObject _materialScroll;
 
     #endregion
 
     #region Fields
 
-
+    [SerializeField] EventSystem _eventSystem;
+    private float dragTreshold = 0.5f;
+    readonly float inch = 2.54f;
 
     #endregion
 
@@ -27,6 +28,9 @@ public class UICardCombineMain : MonoBehaviour
     {
         InitializeSelectedSlots();
         SetMaterialScroll();
+
+        // ScrollRect 내 버튼이 눌리지 않아 드래그 감도를 DPI에 맞게 조절
+        _eventSystem.pixelDragThreshold = (int)(0.5f * Screen.dpi / inch);
     }
 
     #endregion

@@ -880,6 +880,7 @@ MonoBehaviour:
   - {fileID: 1770916893}
   _objSelectedEmpty: {fileID: 1575927675}
   _materialScroll: {fileID: 2065892891}
+  _eventSystem: {fileID: 1310620019}
 --- !u!1 &651703148
 GameObject:
   m_ObjectHideFlags: 0
@@ -1645,7 +1646,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1576190802}
   m_HandleRect: {fileID: 1576190801}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
