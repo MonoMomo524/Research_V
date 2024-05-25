@@ -20,6 +20,8 @@ public class UICardCombineMain : MonoBehaviour
     private float dragTreshold = 0.5f;
     readonly float inch = 2.54f;
 
+    private List<GameObject> _selectedMaterials = new List<GameObject>();
+
     #endregion
 
     #region Constructors
@@ -30,7 +32,7 @@ public class UICardCombineMain : MonoBehaviour
         SetMaterialScroll();
 
         // ScrollRect 내 버튼이 눌리지 않아 드래그 감도를 DPI에 맞게 조절
-        _eventSystem.pixelDragThreshold = (int)(0.5f * Screen.dpi / inch);
+        _eventSystem.pixelDragThreshold = (int)(dragTreshold * Screen.dpi / inch);
     }
 
     #endregion
@@ -76,9 +78,40 @@ public class UICardCombineMain : MonoBehaviour
 
         if(_materialScroll)
         {
-            _materialScroll.GetComponent<UIScrollView>()._initalizeScroll.Invoke(infoList);
+            var scroll = _materialScroll.GetComponent<UIScrollView>();
+            scroll?._initalizeScroll.Invoke(infoList);
+            yield return new WaitUntil(() => scroll.CheckInitialize());
+            var itemList = scroll.GetItems();
+
+            foreach (var objItem in itemList)
+            {
+                Messaging.Execute<ISetSlot>(objItem, (t) =>
+                {
+                    t.SetOnClick(() =>
+                    {
+                        ClickItem(objItem);
+                    });
+                }, true);
+            }
         }
     }
+
+    private void ClickItem(GameObject obj)
+    {
+        var slot = obj.GetComponent<UISlot>();
+        if (!slot) return;
+
+        if(_selectedMaterials.Contains(obj))
+        {
+            //_
+        }
+    }
+
+    #endregion
+
+    #region InterfaceImplements
+
+
 
     #endregion
 }

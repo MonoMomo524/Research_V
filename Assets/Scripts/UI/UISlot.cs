@@ -5,14 +5,25 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+using UnityEngine.EventSystems;
+using UnityEngine.Events;
 
-public class UISlot : MonoBehaviour
+public interface ISetSlot
+{
+    public void SetText(UIScrollView.ScrollItemInfo item);
+    public void SetImage(UIScrollView.ScrollItemInfo item);
+    public void SetOnClick(UnityAction onClick);
+}
+
+public class UISlot : MonoBehaviour, ISetSlot
 {
     #region UIFields
 
     [SerializeField] TextMeshProUGUI _text;
     [SerializeField] Image _img;
     [SerializeField] Button _button;
+
+    UnityAction _onClick;
 
     #endregion
 
@@ -24,15 +35,36 @@ public class UISlot : MonoBehaviour
 
     #region Constructors
 
+    private void Awake()
+    {
+        RegisterGlobal();
+    }
+
+    private void OnDestroy()
+    {
+        UnregisterGlobal();
+    }
+
     private void Start()
     {
         if(_button)
         {
             _button.onClick.AddListener(() =>
             {
-                Debug.Log($"Clicked {_text.text}");
+                _onClick.Invoke();
             });
         }
+
+    }
+
+    protected void RegisterGlobal()
+    {
+        Messaging.RegisterGlobal<ISetSlot>(this);
+    }
+
+    protected void UnregisterGlobal()
+    {
+        Messaging.UnregisterGlobal<ISetSlot>(this);
     }
 
     #endregion
@@ -47,7 +79,14 @@ public class UISlot : MonoBehaviour
             return;
         }
 
-        if(item._itemType == UIScrollView.ScrollItemInfo.eItemType.ITEM)
+        if(item == null)
+        {
+            _text.gameObject.SetActive(false);
+            return;
+        }
+
+        _text.gameObject.SetActive(true);
+        if (item._itemType == UIScrollView.ScrollItemInfo.eItemType.ITEM)
         {
             _text.SetText($"ItemID: {item._itemID}");
         }
@@ -90,10 +129,22 @@ public class UISlot : MonoBehaviour
             return;
         }
 
+        if (item == null)
+        {
+            gameObject.SetActive(false);
+            return;
+        }
+
+        gameObject.SetActive(true);
         if (item._itemType == UIScrollView.ScrollItemInfo.eItemType.ITEM)
             Debug.Log($"Set sprite to item_{item._itemID}");
         else if (item._itemType == UIScrollView.ScrollItemInfo.eItemType.PLAYER)
             Debug.Log($"Set sprite to {item._playerData._FullName}_{item._playerData._Season}_{item._playerData._Type.ToString()}.");
+    }
+
+    public void SetOnClick(UnityAction onClick)
+    {
+        _onClick = onClick;
     }
 
     #endregion

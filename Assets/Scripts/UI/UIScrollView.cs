@@ -44,6 +44,18 @@ public class UIScrollView : MonoBehaviour
         _initalizeScroll += SetScroll;
     }
 
+    private void OnDestroy()
+    {
+        if(_content)
+        {
+            for (int i = _content.childCount; i>0; i--)
+            {
+                var child = _content.GetChild(i - 1);
+                Destroy(child);
+            }
+        }
+    }
+
     #endregion
 
     #region Methods
@@ -55,9 +67,14 @@ public class UIScrollView : MonoBehaviour
         _itemCount = infoList.Count;
     }
 
+    public bool CheckInitialize()
+    {
+        return _itemCount > 0;
+    }
+
     private void SetScroll(List<ScrollItemInfo> infoList)
     {
-        if(!_itemPrefab)
+        if (!_itemPrefab)
         {
             Debug.LogError("itemPrefab is null.");
             return;
@@ -72,7 +89,7 @@ public class UIScrollView : MonoBehaviour
         _itemPrefab.SetActive(needSetItem);
         if (!needSetItem) return;
 
-        for (int i = 0; i< _itemCount; i++)
+        for (int i = 0; i < _itemCount; i++)
         {
             GameObject objItem = Instantiate(_itemPrefab, _content);
             if (objItem is null)
@@ -81,15 +98,36 @@ public class UIScrollView : MonoBehaviour
                 continue;
             }
 
-            if(infoList[i]._itemType == ScrollItemInfo.eItemType.ITEM ||
+            if (infoList[i]._itemType == ScrollItemInfo.eItemType.ITEM ||
                 infoList[i]._itemType == ScrollItemInfo.eItemType.PLAYER)
             {
                 var uiSlot = objItem.GetComponent<UISlot>();
                 uiSlot.SetText(infoList[i]);
                 uiSlot.SetImage(infoList[i]);
+
+                Messaging.Execute<ISetSlot>(objItem, (t) =>
+                {
+                    t.SetText(infoList[i]);
+                    t.SetImage(infoList[i]);
+                }, true);
             }
         }
         _itemPrefab.SetActive(!needSetItem);
+    }
+
+    public List<GameObject> GetItems()
+    {
+        if (_content == null || _content.childCount == 0) return null;
+
+        List<GameObject> returnList = new List<GameObject>();
+        for (int i = 0; i < _content.childCount; i++)
+        {
+            var child = _content.GetChild(i).gameObject;
+            if(child) returnList.Add(child);
+        }
+
+        returnList.Remove(_itemPrefab);
+        return returnList;
     }
 
     #endregion
