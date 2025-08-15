@@ -8,7 +8,7 @@ public class UICardCombineMain : MonoBehaviour
 {
     #region UIFields
 
-    [SerializeField] GameObject[] _selectedSlots;
+    [SerializeField] List<GameObject> _selectedSlots = new List<GameObject>();
     [SerializeField] GameObject _objSelectedEmpty;
     [SerializeField] GameObject _materialScroll;
 
@@ -20,7 +20,10 @@ public class UICardCombineMain : MonoBehaviour
     private float dragTreshold = 0.5f;
     readonly float inch = 2.54f;
 
-    private List<GameObject> _selectedMaterials = new List<GameObject>();
+    private List<ScrollItemInfo> _selectedMaterials = new List<ScrollItemInfo>();
+    private List<PlayerData> _selectedPlayers = new List<PlayerData>();
+
+    private const int _maxCount = 5;
 
     #endregion
 
@@ -48,6 +51,10 @@ public class UICardCombineMain : MonoBehaviour
         {
             if(objSlot)
             {
+                //Messaging.Broadcast<ISetSlot>(objSlot, t =>
+                //{
+                //    t.SetOnDeselectSlot()
+                //});
                 objSlot.SetActive(false);
             }
         }
@@ -69,6 +76,7 @@ public class UICardCombineMain : MonoBehaviour
             return;
         }
 
+        // 선수 보관함을 임시로 생성
         StartCoroutine(SetMaterialScroll(VUtil.GenerateRandomCards()));
     }
 
@@ -98,12 +106,48 @@ public class UICardCombineMain : MonoBehaviour
 
     private void ClickItem(GameObject obj)
     {
-        var slot = obj.GetComponent<UISlot>();
-        if (!slot) return;
-
-        if(_selectedMaterials.Contains(obj))
+        // 이미 있으면 선택하지 않음
+        if (_selectedSlots.Contains(obj))
         {
-            //_
+            var index = _selectedSlots.IndexOf(obj);
+            _selectedSlots.Remove(obj);
+
+            Messaging.Execute<ISetSlot>(obj, tt =>
+            {
+                tt.SetOnDeselectSlot(null);
+            }, true);
+
+            _selectedSlots.Remove(obj);
+        }
+        // 재료카드를 소모하기 위해 선택한 경우
+        else if (_selectedMaterials.Count < _maxCount)
+        {
+            var index = _selectedMaterials.Count;
+            
+        }
+        else
+        {
+            return;
+        }
+
+        RefreshSelectedSlots();
+    }
+
+    public void RefreshSelectedSlots()
+    {
+        for (int i = 0; i < _maxCount; i++)
+        {
+            if (_selectedMaterials.Count <= i)
+            {
+                _selectedSlots[i].SetActive(false);
+                continue;
+            }
+
+            _selectedSlots[i].SetActive(true);
+            Messaging.Execute<ISetSlot>(_selectedSlots[i], t =>
+            {
+                // t.SetImage()
+            }, true);
         }
     }
 
