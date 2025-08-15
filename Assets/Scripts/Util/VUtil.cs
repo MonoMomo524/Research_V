@@ -13,7 +13,7 @@ public static class VUtil
 
     #region Fields
 
-
+    public static List<ScrollItemInfo> _tempPlayerStorage = new List<ScrollItemInfo>();
 
     #endregion
 
@@ -27,8 +27,8 @@ public static class VUtil
 
     public static List<ScrollItemInfo> GenerateRandomCards()
     {
+        _tempPlayerStorage.Clear();
         char c = 'A';
-        List<ScrollItemInfo> infoList = new List<ScrollItemInfo>();
         for (int i = 0; i < 25; i++)
         {
             var playerData = new PlayerData();
@@ -67,10 +67,10 @@ public static class VUtil
                     break;
             }
 
-            infoList.Add(info);
+            _tempPlayerStorage.Add(info);
         }
 
-        return infoList;
+        return _tempPlayerStorage;
     }
 
     #endregion

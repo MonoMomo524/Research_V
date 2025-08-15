@@ -13,6 +13,8 @@ public interface ISetSlot
     public void SetText(UIScrollView.ScrollItemInfo item);
     public void SetImage(UIScrollView.ScrollItemInfo item);
     public void SetOnClick(UnityAction onClick);
+    public void SetOnSelectSlot(UnityAction onSelect);
+    public void SetOnDeselectSlot(UnityAction onDeselect);
 }
 
 public class UISlot : MonoBehaviour, ISetSlot
@@ -24,6 +26,8 @@ public class UISlot : MonoBehaviour, ISetSlot
     [SerializeField] Button _button;
 
     UnityAction _onClick;
+    UnityAction _onSelect;
+    UnityAction _onDeselect;
 
     #endregion
 
@@ -145,6 +149,16 @@ public class UISlot : MonoBehaviour, ISetSlot
     public void SetOnClick(UnityAction onClick)
     {
         _onClick = onClick;
+    }
+
+    public void SetOnSelectSlot(UnityAction onSelect)
+    {
+        _onSelect = onSelect;
+    }
+
+    public void SetOnDeselectSlot(UnityAction onDeselect)
+    {
+        _onDeselect = onDeselect;
     }
 
     #endregion
