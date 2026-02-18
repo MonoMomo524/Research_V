@@ -2,6 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum eTeamName
+{
+    TeamA = 0,
+    TeamB,
+    TeamC,
+    TeamD,
+    TeamE,
+    TeamF,
+    TeamG,
+    TeamH,
+    TeamI,
+    TeamJ,
+}
+
 public class PlayerData
 {
     #region UIFields
