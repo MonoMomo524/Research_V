@@ -44,7 +44,7 @@ public enum eFriendState
 [Serializable]
 public class FriendInfo
 {
-    public string _UserID;         // 유저 고유 ID
+    public int _UserID;         // 유저 고유 ID
     public string _UserName;       // 유저 닉네임
     public eTeamName _FavoriteTeam;   // 선호 구단
     public float _OVR;            // 오버롤
@@ -68,12 +68,16 @@ public class FriendInfo
         }
     }
 
+    /// <summary>
+    /// 서버로부터 받은 친구 정보 JSON을 파싱하여 FriendInfo 객체에 데이터를 채우는 함수
+    /// </summary>
+    /// <param name="json"></param>
     public void ReadFriendInfoJson(JSONNode json)
     { 
-        if (json.Keys("user_info"))
+        if (json.HasKey("user_info"))
         {
             var userInfoJson = json["user_info"];
-            _UserID = userInfoJson["user_id"].Value;
+            _UserID = userInfoJson["user_id"].AsInt;
             _UserName = userInfoJson["user_name"].Value;
             _FavoriteTeam = (eTeamName)Enum.Parse(typeof(eTeamName), userInfoJson["favorite_team"].Value);
             _OVR = userInfoJson["ovr"].AsFloat;
@@ -105,5 +109,28 @@ public class FriendSystemData
     FriendSystemData()
     {
         _maxFriendCount = 100; // 기본 최대 친구 수 설정 (기획데이터 사용 전 임시 값)
+    }
+
+    public void ReadFriendInfoJson(JSONNode json)
+    {
+        if (json.HasKey("max_friend_count"))
+        {
+            _maxFriendCount = json["max_friend_count"].AsInt;
+        }
+        if (json.HasKey("my_friend_code"))
+        {
+            _myFriendCode = json["my_friend_code"].Value;
+        }
+        if (json.HasKey("friend_list"))
+        {
+            var friendListJson = json["friend_list"].AsArray;
+            _friendList.Clear();
+            foreach (var friendJson in friendListJson)
+            {
+                FriendInfo friendInfo = new FriendInfo();
+                friendInfo.ReadFriendInfoJson(friendJson);
+                _friendList.Add(friendInfo);
+            }
+        }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace SimpleJSON
+namespace SimpleJSON
 {
     public partial class JSONNode
     {
@@ -38,6 +38,15 @@
                 }
             }
             return result;
+        }
+
+        public bool HasKey(string key)
+        {
+            if (IsObject)
+            {
+                return Keys.Current.Equals(key);
+            }
+            return false;
         }
     }
 

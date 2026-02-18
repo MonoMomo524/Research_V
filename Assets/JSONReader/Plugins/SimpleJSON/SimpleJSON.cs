@@ -1,4 +1,4 @@
-﻿/* * * * *
+/* * * * *
  * A simple JSON Parser / builder
  * ------------------------------
  * 
@@ -346,6 +346,21 @@ namespace SimpleJSON
         {
             get { return (float)AsDouble; }
             set { AsDouble = value; }
+        }
+
+        public virtual long AsLong
+        {
+            get
+            {
+                long v = 0;
+                if (long.TryParse(Value, out v))
+                    return v;
+                return 0;
+            }
+            set
+            {
+                Value = value.ToString();
+            }
         }
 
         public virtual bool AsBool
