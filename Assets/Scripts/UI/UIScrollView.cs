@@ -112,7 +112,7 @@ public class UIScrollView : MonoBehaviour
                 }, true);
             }
         }
-        _itemPrefab.SetActive(!needSetItem);
+        _itemPrefab.SetActive(true);
     }
 
     public List<GameObject> GetItems()
