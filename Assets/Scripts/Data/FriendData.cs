@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
+using System.Linq;
 using SimpleJSON;
-using Unity.VisualScripting;
 
 /// <summary>
 /// 콘텐츠별 순위 항목 (총 6개 콘텐츠)
@@ -87,11 +86,23 @@ public class FriendInfo
 }
 
 /// <summary>
-/// 친구 시스템 전체 데이터
+/// 친구 시스템 전체 데이터, 싱글톤으로 관리
 /// </summary>
 [Serializable]
 public class FriendSystemData
 {
+    // 싱글톤 패턴 (간단히 public static으로 노출, 필요 시 프로퍼티로 변경)
+    private static FriendSystemData _instance;
+    public static FriendSystemData Instance
+    {
+        get
+        {
+            if (_instance == null)
+                _instance = new FriendSystemData();
+            return _instance;
+        }
+    }
+
     private int _maxFriendCount;               // 최대 친구 수
     private List<FriendInfo> _friendList = new List<FriendInfo>();        // 친구 목록
     private string _myFriendCode = string.Empty;      // 나의 친구 추가 코드
@@ -105,6 +116,18 @@ public class FriendSystemData
     /// 친구 목록이 가득 찼는지 여부
     /// </summary>
     public bool IsFriendListFull => CurrentFriendCount >= _maxFriendCount;
+
+    // 상태 변경은 단일 진입점으로만
+    public void UpdateFriendState(int userID, eFriendState newState)
+    {
+        var target = _friendList.Find(f => f._UserID == userID);
+        if (target == null) return;
+
+        if (newState == eFriendState.NONE)
+            _friendList.Remove(target);
+        else
+            target._FriendState = newState;
+    }
 
     FriendSystemData()
     {
@@ -132,5 +155,16 @@ public class FriendSystemData
                 _friendList.Add(friendInfo);
             }
         }
+    }
+
+    /// <summary>
+    /// 친구 목록에서 특정 상태에 해당하는 친구들만 필터링하여 반환하는 함수
+    /// </summary>
+    /// <param name="sort"></param>
+    /// <returns></returns>
+    public List<FriendInfo> GetFriendListView(eFriendState stateType)
+    {
+        var result = _friendList.FindAll(f => f._FriendState == stateType);
+        return result;
     }
 }
